@@ -9,7 +9,6 @@ const app = require('../app/server')
 
 // reset models and schema from previous tests:
 // see https://github.com/Automattic/mongoose/issues/1251
-
 const mongoose = require('mongoose')
 mongoose.models = {}
 mongoose.modelSchemas = {}
@@ -188,4 +187,3 @@ describe('Recurso cervezas', () => {
     })
   })
 })
-

@@ -1,6 +1,13 @@
 const express = require('express') // llamamos a Express
 const app = express()
 const router = require('./routes')
+const bodyParser = require('body-parser')
+
+require('./db')
+
+/* configuración de middlewares */
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 
 app.use('/api', router)
 
@@ -18,3 +25,5 @@ app.listen(port, () => {
 })
 
 console.log('API todavía no está escuchando!!!!')
+
+module.exports = app
