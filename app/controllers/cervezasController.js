@@ -4,7 +4,20 @@ const { ObjectId } = require('mongodb')
 const search = (req, res) => {
   // api/cervezas/search?q=regaliz
   const q = req.query.q
-  res.send({ mensaje: `Buscada la cerveza que contiene ${q}` })
+  Cervezas.find({ $text: { $search: q } }, (err, cervezas) => {
+    if (err) {
+      return res.status(500).json({
+        message: 'Error en la búsqueda'
+      })
+    }
+    if (!cervezas.length) {
+      return res.status(404).json({
+        message: 'No hemos encontrado cervezas que cumplan esa query'
+      })
+    } else {
+      return res.json(cervezas)
+    }
+  })
 }
 
 const list = (req, res) => {
@@ -21,18 +34,15 @@ const show = (req, res) => {
   Cervezas.findOne({ _id: id }, (err, cerveza) => {
     if (!ObjectId.isValid(id)) {
       return res.status(404).send()
-    }
-    if (err) {
+    } else if (err) {
       return res.status(500).json({
         message: 'Se ha producido un error al obtener la cerveza'
       })
-    }
-    if (!cerveza) {
+    } else if (!cerveza) {
       return res.status(404).json({
         message: 'No tenemos esta cerveza'
       })
-    }
-    return res.json(cerveza)
+    } else return res.json(cerveza)
   })
 }
 const create = (req, res) => {
@@ -90,9 +100,23 @@ const update = (req, res) => {
   })
 }
 const remove = (req, res) => {
-  // api/cervezas/:id
   const id = req.params.id
-  res.send({ mensaje: `Buscada la cerveza que contiene ${id}` })
+  Cervezas.findOneAndDelete({ _id: id }, (err, cerveza) => {
+    if (!ObjectId.isValid(id)) {
+      return res.status(404).send()
+    }
+    if (err) {
+      return res.json(500, {
+        message: 'No hemos encontrado la cerveza'
+      })
+    }
+    if (!cerveza) {
+      return res.status(404).json({
+        message: 'No hemos encontrado la cerveza'
+      })
+    }
+    return res.json(cerveza)
+  })
 }
 
 module.exports = {
